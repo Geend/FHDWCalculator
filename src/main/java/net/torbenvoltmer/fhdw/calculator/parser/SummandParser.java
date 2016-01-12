@@ -1,0 +1,141 @@
+package net.torbenvoltmer.fhdw.calculator.parser;
+
+import java.util.List;
+
+import net.torbenvoltmer.fhdw.calculator.basic.TextConstants;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.expression.Difference;
+import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
+import net.torbenvoltmer.fhdw.calculator.parser.expression.Product;
+import net.torbenvoltmer.fhdw.calculator.parser.expression.Quotient;
+import net.torbenvoltmer.fhdw.calculator.parser.operator.Substraction;
+import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
+import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
+import net.torbenvoltmer.fhdw.calculator.symbols.Card;
+import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
+import net.torbenvoltmer.fhdw.calculator.symbols.Div;
+import net.torbenvoltmer.fhdw.calculator.symbols.EndSymbol;
+import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
+import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
+import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
+import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
+import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
+import net.torbenvoltmer.fhdw.calculator.symbols.Times;
+
+public class SummandParser implements Parser, SymbolVisitor{
+	
+	private Expression expression1;
+	private Expression finalExpression;
+	
+	private List<Symbol> symbols;
+	private final static String[] allowedSymbols = { TextConstants.PLUS.toString(),TextConstants.TIMES.toString(), TextConstants.BRACKET_CLOSE.toString(), TextConstants.END};
+	
+	@Override
+	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException {
+		this.symbols = symbolList;
+		
+		FactorParser factorParser = new FactorParser();
+		this.expression1 = factorParser.toExpression(this.symbols);
+		
+		symbols.get(0).accept(this);
+		
+		return finalExpression;
+	}
+
+	/**
+	 * Allowed. The ExpressionParser and SummandParser handle Plus
+	 */
+	@Override
+	public void handel(Plus symbol) {
+		this.finalExpression = this.expression1;
+	}
+	
+	/**
+	 * Allowed. The ExpressionParser and SummandParser handle Minus
+	 */
+	@Override
+	public void handel(Minus symbol) throws ParserSymbolHandleException {
+		this.finalExpression = this.expression1;
+	}
+	
+	/**
+	 * Allowed. The SummandParser handles Times
+	 * @throws ParserSymbolHandleException 
+	 */
+	@Override
+	public void handel(Times symbol) throws ParserSymbolHandleException {
+		this.symbols.remove(0);
+		SummandParser summandParser = new SummandParser();
+		this.finalExpression = new Product(expression1,
+				summandParser.toExpression(symbols));
+	}
+	/**
+	 * Allowed. The SummandParser handles Div
+	 * @throws ParserSymbolHandleException 
+	 */
+	@Override
+	public void handel(Div symbol) throws ParserSymbolHandleException {
+		this.symbols.remove(0);
+		SummandParser summandParser = new SummandParser();
+		this.finalExpression = new Quotient(expression1,
+				summandParser.toExpression(symbols));
+		
+	}
+	/**
+	 * Not allowed. The FacotrParser handles BracketOpen
+	 * @throws ParserSymbolHandleException 
+	 */
+	@Override
+	public void handel(BracketOpen symbol) throws ParserSymbolHandleException {		
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);	
+	}
+
+	/**
+	 * Allowed. The ExpressionParser and SummandParser handle BracketClose
+	 */
+	@Override
+	public void handel(BracketClose symbol) {
+		this.finalExpression = this.expression1;
+		
+	}
+
+	/**
+	 * Not allowed. The FacotrParser handles Card
+	 * @throws ParserSymbolHandleException 
+	 */
+	@Override
+	public void handel(Card symbol) throws ParserSymbolHandleException {	
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);	
+	}
+
+	/**
+	 * Allowed. The ExpressionParser and SummandParser handle EndSymbol
+	 */
+	@Override
+	public void handel(EndSymbol symbol) {
+		this.finalExpression = this.expression1;
+		
+	}
+
+	@Override
+	public void handel(ErrorToken symbol) throws ParserSymbolHandleException {
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);	
+		
+	}
+	/**
+	 * Not allowed. The FacotrParser handles Comment
+	 * @throws ParserSymbolHandleException 
+	 */
+	@Override
+	public void handel(Comment symbol) throws ParserSymbolHandleException {
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);	
+		
+	}
+
+
+
+
+
+	
+
+}
