@@ -9,4 +9,6 @@ public class GuiTextConstants {
     public static final String SCANNING_ERROR_TEXT = "Error during scanning.";
     public static final String PARSING_ERROR_TEXT = "Error during parsing.";
 
+    public static final String COMPILE_SUCCESSFUL = "Expression successfully compiled.";
+    public static final String EVALUATE_SUCCESSFUL = "Expressions successfully evaluated.";
 }

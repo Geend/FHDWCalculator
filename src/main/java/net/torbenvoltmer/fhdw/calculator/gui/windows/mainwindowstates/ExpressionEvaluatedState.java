@@ -1,5 +1,6 @@
 package net.torbenvoltmer.fhdw.calculator.gui.windows.mainwindowstates;
 
+import net.torbenvoltmer.fhdw.calculator.gui.GuiTextConstants;
 import net.torbenvoltmer.fhdw.calculator.gui.UseCaseController;
 
 /**
@@ -28,7 +29,7 @@ public class ExpressionEvaluatedState  implements MainWindowState{
 
     @Override
     public String getMessage() {
-        return "Expressions successfully evaluated.";
+        return GuiTextConstants.EVALUATE_SUCCESSFUL;
     }
 
     @Override
