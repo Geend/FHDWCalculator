@@ -10,10 +10,19 @@ public class BracketExpression implements Expression {
 	public BracketExpression(Expression expression) {
 		this.expression = expression;
 	}
-	
+
+
+	public Expression getExpression(){
+		return expression;
+	}
 	@Override
 	public Integer evaluate() throws DivisionByZeroException {
 		return expression.evaluate();
+	}
+
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.handel(this);
 	}
 
 	@Override

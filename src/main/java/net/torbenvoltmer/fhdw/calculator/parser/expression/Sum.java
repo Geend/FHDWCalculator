@@ -12,7 +12,10 @@ public class Sum extends TwoArgumentExpression{
 	public Sum(Expression summand1, Expression summand2) {
 		super(new Addition(), summand1, summand2);		
 	}
-
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.handel(this);
+	}
 	@Override
 	public boolean equals(Object obj){
 		if(obj == null)

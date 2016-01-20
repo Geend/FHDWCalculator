@@ -1,6 +1,7 @@
 package net.torbenvoltmer.fhdw.calculator.gui;
 
 import net.torbenvoltmer.fhdw.calculator.gui.windows.MainWindow;
+import net.torbenvoltmer.fhdw.calculator.gui.windows.jtreebuilder.ExpressionJTreeBuilder;
 import net.torbenvoltmer.fhdw.calculator.gui.windows.mainwindowstates.*;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.DivisionByZeroException;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
@@ -8,6 +9,7 @@ import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
 import net.torbenvoltmer.fhdw.calculator.scanner.exceptions.ScannerException;
 
 import javax.swing.*;
+import javax.swing.tree.TreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,6 +41,12 @@ public class UseCaseController implements ActionListener, KeyListener{
     public void handel(ExpressionEnteredState expressionEnteredState) {
         try {
             this.currentExpression = useCaseFacade.compile(view.getExpression());
+            ExpressionJTreeBuilder expressionJTreeBuilder = new ExpressionJTreeBuilder();
+
+            TreeModel model = expressionJTreeBuilder.buildTree(this.currentExpression);
+            view.setTreeModel(model);
+
+
             view.setState(new ExpressionCompiledState());
         } catch (ParserSymbolHandleException e1) {
             view.setState(new ErrorState(GuiTextConstants.PARSING_ERROR_TEXT));

@@ -7,7 +7,10 @@ public final class Difference extends TwoArgumentExpression {
 	public Difference(Expression minuend, Expression subtrahend) {
 		super(new Substraction(), minuend, subtrahend);		
 	}
-
+	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.handel(this);
+	}
 	@Override
 	public boolean equals(Object obj){
 		if(obj == null)
@@ -16,4 +19,6 @@ public final class Difference extends TwoArgumentExpression {
 			return true;
 		return false;
 	}
+
+
 }

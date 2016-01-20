@@ -14,4 +14,6 @@ public interface Expression {
 	 * @throws DivisionByZeroException 
 	 */
 	Integer evaluate() throws DivisionByZeroException;
+
+	void accept(ExpressionVisitor visitor);
 }

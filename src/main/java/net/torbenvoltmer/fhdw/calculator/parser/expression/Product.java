@@ -15,6 +15,11 @@ public class Product extends TwoArgumentExpression {
 	}
 
 	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.handel(this);
+	}
+
+	@Override
 	public boolean equals(Object obj){
 		if(obj == null)
 			return false;

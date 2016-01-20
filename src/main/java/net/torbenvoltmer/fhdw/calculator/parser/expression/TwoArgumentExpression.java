@@ -55,6 +55,9 @@ public abstract class TwoArgumentExpression implements Expression {
 	}
 
 	@Override
+	abstract public void accept(ExpressionVisitor visitor);
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

@@ -15,6 +15,11 @@ public class NaturalNumber implements Expression {
 	}
 
 	@Override
+	public void accept(ExpressionVisitor visitor) {
+		visitor.handel(this);
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
