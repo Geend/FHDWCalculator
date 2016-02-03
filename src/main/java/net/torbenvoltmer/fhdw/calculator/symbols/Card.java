@@ -1,6 +1,7 @@
 package net.torbenvoltmer.fhdw.calculator.symbols;
 
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 
 /**
  * An instance of this class represents a natural number.
@@ -31,7 +32,7 @@ public class Card implements Symbol {
 	}
 	
 	@Override
-	public void accept(SymbolVisitor p) throws ParserSymbolHandleException  {
+	public void accept(SymbolVisitor p) throws ParserSymbolHandleException, VariableCycleException {
 		p.handel(this);		
 	}
 	

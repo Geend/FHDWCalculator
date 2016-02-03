@@ -4,37 +4,34 @@ import java.util.List;
 
 import net.torbenvoltmer.fhdw.calculator.basic.TextConstants;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Difference;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Product;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Quotient;
 import net.torbenvoltmer.fhdw.calculator.parser.operator.Substraction;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
-import net.torbenvoltmer.fhdw.calculator.symbols.Card;
-import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
-import net.torbenvoltmer.fhdw.calculator.symbols.Div;
-import net.torbenvoltmer.fhdw.calculator.symbols.EndSymbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
-import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
-import net.torbenvoltmer.fhdw.calculator.symbols.Times;
+import net.torbenvoltmer.fhdw.calculator.symbols.*;
 
 public class SummandParser implements Parser, SymbolVisitor{
-	
+
+	private StartParser topLevelParser;
+
 	private Expression expression1;
 	private Expression finalExpression;
 	
 	private List<Symbol> symbols;
 	private final static String[] allowedSymbols = { TextConstants.PLUS.toString(),TextConstants.TIMES.toString(), TextConstants.BRACKET_CLOSE.toString(), TextConstants.END};
-	
+
+
+	public SummandParser(StartParser topLevelParser){
+		this.topLevelParser = topLevelParser;
+	}
+
 	@Override
-	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException {
+	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols = symbolList;
 		
-		FactorParser factorParser = new FactorParser();
+		FactorParser factorParser = new FactorParser(topLevelParser);
 		this.expression1 = factorParser.toExpression(this.symbols);
 		
 		symbols.get(0).accept(this);
@@ -63,9 +60,9 @@ public class SummandParser implements Parser, SymbolVisitor{
 	 * @throws ParserSymbolHandleException 
 	 */
 	@Override
-	public void handel(Times symbol) throws ParserSymbolHandleException {
+	public void handel(Times symbol) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols.remove(0);
-		SummandParser summandParser = new SummandParser();
+		SummandParser summandParser = new SummandParser(topLevelParser);
 		this.finalExpression = new Product(expression1,
 				summandParser.toExpression(symbols));
 	}
@@ -74,9 +71,9 @@ public class SummandParser implements Parser, SymbolVisitor{
 	 * @throws ParserSymbolHandleException 
 	 */
 	@Override
-	public void handel(Div symbol) throws ParserSymbolHandleException {
+	public void handel(Div symbol) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols.remove(0);
-		SummandParser summandParser = new SummandParser();
+		SummandParser summandParser = new SummandParser(topLevelParser);
 		this.finalExpression = new Quotient(expression1,
 				summandParser.toExpression(symbols));
 		
@@ -133,6 +130,10 @@ public class SummandParser implements Parser, SymbolVisitor{
 	}
 
 
+	@Override
+	public void handel(VariableSymbol symbol)  throws ParserSymbolHandleException{
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);
+	}
 
 
 

@@ -3,9 +3,11 @@ package net.torbenvoltmer.fhdw.calculator.parser;
 import java.util.List;
 
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
 import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
 import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
+import net.torbenvoltmer.fhdw.calculator.symbols.VariableSymbol;
 
 
 /**
@@ -20,5 +22,7 @@ public interface Parser{
 	 * @return
 	 * @throws ParserSymbolHandleException
 	 */
-	Expression toExpression(List<Symbol> symbolList)  throws ParserSymbolHandleException;
+	Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException, VariableCycleException;
+
+
 }

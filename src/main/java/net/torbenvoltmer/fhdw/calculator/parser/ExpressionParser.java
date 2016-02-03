@@ -4,23 +4,15 @@ import java.util.List;
 
 import net.torbenvoltmer.fhdw.calculator.basic.TextConstants;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Difference;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Sum;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
-import net.torbenvoltmer.fhdw.calculator.symbols.Card;
-import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
-import net.torbenvoltmer.fhdw.calculator.symbols.Div;
-import net.torbenvoltmer.fhdw.calculator.symbols.EndSymbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
-import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
-import net.torbenvoltmer.fhdw.calculator.symbols.Times;
+import net.torbenvoltmer.fhdw.calculator.symbols.*;
 
 public class ExpressionParser implements Parser, SymbolVisitor {
+
+	private StartParser topLevelParser;
 
 	private Expression expression1;
 	private Expression finalExpression;
@@ -29,10 +21,14 @@ public class ExpressionParser implements Parser, SymbolVisitor {
 	private final static String[] allowedSymbols = { TextConstants.PLUS.toString(), TextConstants.MINUS.toString(),
 			TextConstants.BRACKET_CLOSE.toString(), TextConstants.END };
 
+
+	public ExpressionParser(StartParser topLevelParser){
+		this.topLevelParser = topLevelParser;
+	}
 	@Override
-	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException {
+	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols = symbolList;
-		SummandParser summandParser = new SummandParser();
+		SummandParser summandParser = new SummandParser(topLevelParser);
 		this.expression1 = summandParser.toExpression(this.symbols);
 
 		symbols.get(0).accept(this);
@@ -45,9 +41,9 @@ public class ExpressionParser implements Parser, SymbolVisitor {
 	 * @throws ParserSymbolHandleException
 	 */
 	@Override
-	public void handel(Plus symbol) throws ParserSymbolHandleException {
+	public void handel(Plus symbol) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols.remove(0);
-		ExpressionParser expressionParser = new ExpressionParser();
+		ExpressionParser expressionParser = new ExpressionParser(topLevelParser);
 		this.finalExpression = new Sum(expression1, expressionParser.toExpression(symbols));
 
 	}
@@ -58,10 +54,10 @@ public class ExpressionParser implements Parser, SymbolVisitor {
 	 * @throws ParserSymbolHandleException
 	 */
 	@Override
-	public void handel(Minus symbol) throws ParserSymbolHandleException {
+	public void handel(Minus symbol) throws ParserSymbolHandleException, VariableCycleException {
 		//We are doing some magic here to make subtraction chains work properly
 		this.symbols.remove(0);
-		SummandParser expressionParser = new SummandParser();
+		SummandParser expressionParser = new SummandParser(topLevelParser);
 		this.expression1 = new Difference(expression1, expressionParser.toExpression(symbols));
 		this.symbols.get(0).accept(this);
 	}
@@ -139,5 +135,11 @@ public class ExpressionParser implements Parser, SymbolVisitor {
 		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);
 
 	}
+
+	@Override
+	public void handel(VariableSymbol symbol)  throws ParserSymbolHandleException{
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);
+	}
+
 
 }

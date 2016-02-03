@@ -8,6 +8,7 @@ import net.torbenvoltmer.fhdw.calculator.gui.UseCaseController;
 public class FHDWCalculator {
 
     public static void main (String[] args){
-        new UseCaseController();
+        UseCaseController controller = new UseCaseController();
+        controller.init();
     }
 }

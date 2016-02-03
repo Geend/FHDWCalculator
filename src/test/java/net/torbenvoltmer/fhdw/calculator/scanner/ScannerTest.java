@@ -5,22 +5,13 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.torbenvoltmer.fhdw.calculator.symbols.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import net.torbenvoltmer.fhdw.calculator.scanner.Scanner;
 import net.torbenvoltmer.fhdw.calculator.scanner.exceptions.CommentNotClosedException;
 import net.torbenvoltmer.fhdw.calculator.scanner.exceptions.ScannerException;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
-import net.torbenvoltmer.fhdw.calculator.symbols.Card;
-import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
-import net.torbenvoltmer.fhdw.calculator.symbols.Div;
-import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
-import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.Times;
 
 public class ScannerTest {
 	private Scanner scanner;
@@ -222,11 +213,43 @@ public class ScannerTest {
 		List<Symbol> symbolList = scanner.toSymbolSequence("(34 / 7/*Test Comment*/) - 2");
 		assertEquals(expected, symbolList);
 	}
-	
-	@Test(expected=CommentNotClosedException.class)
+
+	@Test(expected = CommentNotClosedException.class)
 	public void testNotClosedCommentDetection() throws ScannerException {
-		scanner.toSymbolSequence("3+/*test4");		
+		scanner.toSymbolSequence("3+/*test4");
 	}
 
 
+	@Test
+	public void testVariableDetection1() throws ScannerException {
+		expected.add(new VariableSymbol('a'));
+
+		List<Symbol> symbolList = scanner.toSymbolSequence("a");
+		assertEquals(expected, symbolList);
+	}
+
+	@Test
+	public void testVariableDetection2() throws ScannerException {
+		expected.add(new VariableSymbol('a'));
+		expected.add(new Plus());
+		expected.add(new VariableSymbol('b'));
+
+
+		List<Symbol> symbolList = scanner.toSymbolSequence("a+b");
+		assertEquals(expected, symbolList);
+	}
+
+	//TODO: Find a better name for this test
+	@Test
+	public void testVariableDetection3() throws ScannerException {
+		expected.add(new VariableSymbol('b'));
+		expected.add(new ErrorToken('a'));
+		expected.add(new ErrorToken('r'));
+
+
+		List<Symbol> symbolList = scanner.toSymbolSequence("bar");
+		assertEquals(expected, symbolList);
+
+
+	}
 }

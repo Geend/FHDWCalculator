@@ -11,4 +11,6 @@ public class GuiTextConstants {
 
     public static final String COMPILE_SUCCESSFUL = "Expression successfully compiled.";
     public static final String EVALUATE_SUCCESSFUL = "Expressions successfully evaluated.";
+
+    public static final String VARIABLE_CYCLE_ERROR_TEXT = "Variable cycle detected!";
 }

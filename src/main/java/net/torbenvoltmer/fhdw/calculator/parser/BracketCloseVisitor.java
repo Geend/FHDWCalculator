@@ -4,18 +4,8 @@ import java.util.List;
 
 import net.torbenvoltmer.fhdw.calculator.basic.TextConstants;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
-import net.torbenvoltmer.fhdw.calculator.symbols.Card;
-import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
-import net.torbenvoltmer.fhdw.calculator.symbols.Div;
-import net.torbenvoltmer.fhdw.calculator.symbols.EndSymbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
-import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
-import net.torbenvoltmer.fhdw.calculator.symbols.Times;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
+import net.torbenvoltmer.fhdw.calculator.symbols.*;
 
 /**
  * SymbolVisitor that only accepts instances of BracketClose.
@@ -27,7 +17,7 @@ public class BracketCloseVisitor implements SymbolVisitor {
 	
 	private final static String[] allowedSymbols = { TextConstants.BRACKET_CLOSE.toString() };
 	
-	public BracketCloseVisitor(List<Symbol> symbolList) throws ParserSymbolHandleException {
+	public BracketCloseVisitor(List<Symbol> symbolList) throws ParserSymbolHandleException, VariableCycleException {
 		symbolList.get(0).accept(this);
 	}
 	@Override
@@ -84,6 +74,11 @@ public class BracketCloseVisitor implements SymbolVisitor {
 	public void handel(Comment symbol) throws ParserSymbolHandleException {
 		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);
 		
+	}
+
+	@Override
+	public void handel(VariableSymbol symbol)  throws ParserSymbolHandleException{
+		throw new ParserSymbolHandleException(symbol.toString(), allowedSymbols);
 	}
 
 }

@@ -1,6 +1,7 @@
 package net.torbenvoltmer.fhdw.calculator.symbols;
 
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 
 public class Comment implements Symbol {
 
@@ -16,7 +17,7 @@ public class Comment implements Symbol {
 	}
 
 	@Override
-	public void accept(SymbolVisitor sv) throws ParserSymbolHandleException {	
+	public void accept(SymbolVisitor sv) throws ParserSymbolHandleException, VariableCycleException {
 		sv.handel(this);
 	}
 	@Override

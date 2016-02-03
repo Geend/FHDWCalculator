@@ -14,4 +14,6 @@ public interface ExpressionVisitor{
     void handel(Difference difference);
     void handel(Product product);
     void handel(Quotient quotient);
+
+    void handel(VariableExpression variableExpression);
 }

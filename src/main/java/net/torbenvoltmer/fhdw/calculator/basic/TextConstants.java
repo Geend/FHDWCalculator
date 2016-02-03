@@ -12,6 +12,8 @@ public class TextConstants {
 	public final static String CARD = "Card";
 	public final static String END = "EndSymbol";
 	public final static String COMMENT = "Comment";
+	public static final String VARIABLE = "Variable";
+
 	public final static String parserError(String expected, String actual){
 		return expected + "Parser Fehler: wurder erwartet. " + actual + " wurde geliefert";
 	}

@@ -1,8 +1,9 @@
 package net.torbenvoltmer.fhdw.calculator.parser.expression;
 
 import net.torbenvoltmer.fhdw.calculator.parser.exception.DivisionByZeroException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableNotDefinedException;
 
-public class BracketExpression implements Expression {
+public class BracketExpression extends Expression {
 
 	
 	private Expression expression;
@@ -16,7 +17,7 @@ public class BracketExpression implements Expression {
 		return expression;
 	}
 	@Override
-	public Integer evaluate() throws DivisionByZeroException {
+	public Integer evaluate() throws DivisionByZeroException, VariableNotDefinedException {
 		return expression.evaluate();
 	}
 

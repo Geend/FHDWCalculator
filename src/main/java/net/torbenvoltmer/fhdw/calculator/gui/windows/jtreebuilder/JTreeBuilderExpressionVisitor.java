@@ -51,6 +51,11 @@ public class JTreeBuilderExpressionVisitor implements ExpressionVisitor {
         handel(quotient, "/");
     }
 
+    @Override
+    public void handel(VariableExpression variableExpression) {
+        treeNode = new DefaultMutableTreeNode(variableExpression.getVariable().getName());
+    }
+
 
     public void handel(TwoArgumentExpression twoArgumentExpression, String type) {
         treeNode = new DefaultMutableTreeNode(type);

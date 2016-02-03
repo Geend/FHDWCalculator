@@ -4,21 +4,14 @@ import java.util.List;
 
 import net.torbenvoltmer.fhdw.calculator.basic.TextConstants;
 import net.torbenvoltmer.fhdw.calculator.parser.exception.ParserSymbolHandleException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableCycleException;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.BracketExpression;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.Expression;
 import net.torbenvoltmer.fhdw.calculator.parser.expression.NaturalNumber;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketClose;
-import net.torbenvoltmer.fhdw.calculator.symbols.BracketOpen;
-import net.torbenvoltmer.fhdw.calculator.symbols.Card;
-import net.torbenvoltmer.fhdw.calculator.symbols.Comment;
-import net.torbenvoltmer.fhdw.calculator.symbols.Div;
-import net.torbenvoltmer.fhdw.calculator.symbols.EndSymbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.ErrorToken;
-import net.torbenvoltmer.fhdw.calculator.symbols.Minus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Plus;
-import net.torbenvoltmer.fhdw.calculator.symbols.Symbol;
-import net.torbenvoltmer.fhdw.calculator.symbols.SymbolVisitor;
-import net.torbenvoltmer.fhdw.calculator.symbols.Times;
+import net.torbenvoltmer.fhdw.calculator.parser.expression.VariableExpression;
+import net.torbenvoltmer.fhdw.calculator.parser.variables.Variable;
+import net.torbenvoltmer.fhdw.calculator.parser.variables.VariableStorage;
+import net.torbenvoltmer.fhdw.calculator.symbols.*;
 
 
 /**
@@ -28,13 +21,18 @@ import net.torbenvoltmer.fhdw.calculator.symbols.Times;
  */
 public class FactorParser implements Parser, SymbolVisitor {
 
+	private StartParser topLevelParser;
 	private Expression finalExpression;
 	
 	private List<Symbol> symbols;
 	
-	private final static String[] allowedSymbols = { TextConstants.CARD, TextConstants.BRACKET_OPEN.toString(), TextConstants.COMMENT};
+	private final static String[] allowedSymbols = { TextConstants.CARD, TextConstants.BRACKET_OPEN.toString(), TextConstants.COMMENT, TextConstants.VARIABLE};
+
+	public FactorParser(StartParser topLevelParser){
+		this.topLevelParser = topLevelParser;
+	}
 	@Override
-	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException {
+	public Expression toExpression(List<Symbol> symbolList) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols = symbolList;
 		symbols.get(0).accept(this);
 		
@@ -81,9 +79,9 @@ public class FactorParser implements Parser, SymbolVisitor {
 	 * @throws ParserSymbolHandleException 
 	 */
 	@Override
-	public void handel(BracketOpen symbol) throws ParserSymbolHandleException {
+	public void handel(BracketOpen symbol) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols.remove(0);
-		ExpressionParser expressionParser = new ExpressionParser();
+		ExpressionParser expressionParser = new ExpressionParser(topLevelParser);
 		this.finalExpression = new BracketExpression(
 				expressionParser.toExpression(this.symbols));
 
@@ -127,14 +125,18 @@ public class FactorParser implements Parser, SymbolVisitor {
 	}
 	
 	@Override
-	public void handel(Comment symbol) throws ParserSymbolHandleException {
+	public void handel(Comment symbol) throws ParserSymbolHandleException, VariableCycleException {
 		this.symbols.remove(0);
-		ExpressionParser expressionParser = new ExpressionParser();
+		ExpressionParser expressionParser = new ExpressionParser(topLevelParser);
 		this.finalExpression = new BracketExpression(
 				expressionParser.toExpression(this.symbols));
 	}
 
+	@Override
+	public void handel(VariableSymbol symbol) throws ParserSymbolHandleException, VariableCycleException {
+		this.symbols.remove(0);
+		this.finalExpression = new VariableExpression(topLevelParser.getVariable(symbol));
 
-
+	}
 
 }

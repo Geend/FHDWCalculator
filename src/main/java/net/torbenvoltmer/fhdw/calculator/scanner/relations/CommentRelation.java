@@ -7,7 +7,7 @@ import net.torbenvoltmer.fhdw.calculator.scanner.states.State;
 
 public class CommentRelation implements SymbolStateRelation {
 
-	private static final SymbolStateRelation nextRelation = new OperatorRelation();
+	private static final SymbolStateRelation nextRelation = new VariableRelation();
 
 	@Override
 	public State checkChar(Scanner scanner, Character c) {

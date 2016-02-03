@@ -1,6 +1,6 @@
 package net.torbenvoltmer.fhdw.calculator.parser.expression;
 
-public class NaturalNumber implements Expression {
+public class NaturalNumber extends Expression {
 
 	
 	private Integer value;
@@ -43,7 +43,7 @@ public class NaturalNumber implements Expression {
 			return false;
 		return true;
 	}
-	
-	
-	
+
+
+
 }

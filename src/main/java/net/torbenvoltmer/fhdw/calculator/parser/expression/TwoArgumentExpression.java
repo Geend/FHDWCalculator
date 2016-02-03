@@ -1,6 +1,7 @@
 package net.torbenvoltmer.fhdw.calculator.parser.expression;
 
 import net.torbenvoltmer.fhdw.calculator.parser.exception.DivisionByZeroException;
+import net.torbenvoltmer.fhdw.calculator.parser.exception.VariableNotDefinedException;
 import net.torbenvoltmer.fhdw.calculator.parser.operator.Operator;
 
 /**
@@ -8,7 +9,7 @@ import net.torbenvoltmer.fhdw.calculator.parser.operator.Operator;
  * @author Torben
  *
  */
-public abstract class TwoArgumentExpression implements Expression {
+public abstract class TwoArgumentExpression extends Expression {
 
 	private Operator operator;
 	private Expression argument1;
@@ -26,7 +27,7 @@ public abstract class TwoArgumentExpression implements Expression {
 	}
 	
 	@Override
-	public Integer evaluate() throws DivisionByZeroException {
+	public Integer evaluate() throws DivisionByZeroException, VariableNotDefinedException {
 		return operator.calculate(argument1, argument2);
 	}
 	

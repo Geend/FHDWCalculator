@@ -19,16 +19,11 @@ import static org.junit.Assert.*;
  */
 public class UseCaseFacadeTest {
 
-    private UseCaseFacade useCaseFacade;
-    @Before
-    public void setUp() throws Exception {
-        useCaseFacade = new UseCaseFacade();
-    }
 
     @Test
     public void testCompile() throws Exception {
         Expression expected = new Sum(new NaturalNumber(3), new NaturalNumber(4));
-        Expression actual = useCaseFacade.compile("3+4");
+        Expression actual = UseCaseFacade.getInstance().compile("3+4");
         Assert.assertEquals(expected, actual);
     }
 
@@ -36,7 +31,7 @@ public class UseCaseFacadeTest {
     public void testEvaluate() throws Exception {
 
         Integer expected = 7;
-        Integer actual = useCaseFacade.evaluate(useCaseFacade.compile("3+4"));
+        Integer actual = UseCaseFacade.getInstance().evaluate(UseCaseFacade.getInstance().compile("3+4"));
         Assert.assertEquals(expected, actual);
 
     }
